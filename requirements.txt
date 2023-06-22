@@ -1,0 +1,2 @@
+Requests==2.31.0
+webuntis==0.1.21
