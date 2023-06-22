@@ -51,7 +51,7 @@ def setStatus(statusID, accessKey):
 if __name__ == "__main__":
 	users = []
 	try:
-		with open("user.json", "r") as file:
+		with open("users.json", "r") as file:
 			users = json.load(file)
 
 		for user in users:
