@@ -1,21 +1,36 @@
 #!/usr/bin/env python3
-import webuntis, datetime, json, requests
+import webuntis, datetime, json, requests, sys
+
+def log(message):
+	with open("error.log", "a") as file:
+		file.write(datetime.datetime.now().strftime("%d/%m/%Y %H:%M") + " " + message + "\n")
 
 def getTimeRange(klasse, untisSession):
-	untisSession.login()
+	try:
+		untisSession.login()
 
-	today = datetime.date.today()
+		today = datetime.date.today()
 
-	timetable = []
-	for elem in untisSession.timetable(klasse=untisSession.klassen().filter(name=klasse)[0], start=today, end=today):
-		elem = json.loads(str(elem).replace("'", "\""))
-		timetable.append({"startTime": elem["startTime"], "endTime": elem["endTime"]})
+		timetable = []
+		for elem in untisSession.timetable(klasse=untisSession.klassen().filter(name=klasse)[0], start=today, end=today):
+			elem = json.loads(str(elem).replace("'", "\""))
+			if "code" in elem:
+				if elem["code"] != "cancelled":
+					timetable.append({"startTime": elem["startTime"], "endTime": elem["endTime"]})
+			else:
+				timetable.append({"startTime": elem["startTime"], "endTime": elem["endTime"]})
 
-	untisSession.logout()
+		untisSession.logout()
 
-	timetable = sorted(timetable, key=lambda d: d["startTime"])
+		timetable = sorted(timetable, key=lambda d: d["startTime"])
 
-	return [[timetable[0]["startTime"], timetable[-1]["endTime"]]]
+		return [[timetable[0]["startTime"], timetable[-1]["endTime"]]]
+	except IndexError:
+		log(f"Untis: Klasse '{klasse}' not found.")
+		sys.exit(1)
+	except webuntis.errors.Error as e:
+		log(f"Untis: {e}")
+		sys.exit(1)
 
 def isInTimeRange(timeRanges, time):
 	inTimeRange = False
@@ -29,24 +44,22 @@ def isInTimeRange(timeRanges, time):
 	return inTimeRange
 
 def setStatus(statusID, accessKey):
+	statusCache = {}
 	try:
-		with open("untis-divera247-status.txt", "r") as file:
-			if int(file.read()) == statusID:
-				return None
-	except FileNotFoundError:
-		pass
-	except Exception as e:
-		print(e)
-		with open("untis-divera247.log", "a") as file:
-			file.write(str(e))
-
-	request = requests.post(f"https://app.divera247.com/api/setstatus?Status[id]={statusID}&accesskey={accessKey}")
-	if request.status_code == 200:
-		with open("untis-divera247-status.txt", "w") as file:
-			file.write(str(statusID))
-	else:
-		with open("untis-divera247.log", "a") as file:
-			file.write(request.text)
+		with open("status-cache.json", "r") as file:
+			statusCache = json.load(file)
+			if accessKey in statusCache:
+				if statusCache[accessKey] == statusID:
+					return None
+	finally:
+		request = requests.post(f"https://app.divera247.com/api/setstatus?Status[id]={statusID}&accesskey={accessKey}")
+		if request.status_code == 200:
+			with open("status-cache.json", "w") as file:
+				statusCache[accessKey] = statusID
+				json.dump(statusCache, file)
+		else:
+			log(f"Divera 24/7: {request.text}")
+			sys.exit(1)
 
 if __name__ == "__main__":
 	users = []
@@ -70,4 +83,6 @@ if __name__ == "__main__":
 			else:
 				setStatus(user["divera247_status_absent"], ACCESS_KEY)
 	except FileNotFoundError:
-		print("ERROR: users.json not found!")
+		log("users.json not found!")
+	except KeyError as e:
+		log(f"untis.json is corrupt. Key {e} does not exist.")
