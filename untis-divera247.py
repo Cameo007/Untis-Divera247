@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import webuntis, datetime, json, requests, sys
+import webuntis, datetime, json, requests, sys, threading
 
 def log(message):
 	with open("error.log", "a") as file:
@@ -61,6 +61,23 @@ def setStatus(statusID, accessKey):
 			log(f"Divera 24/7: {request.text}")
 			sys.exit(1)
 
+
+def main(user):
+	ACCESS_KEY = user["divera247_accesskey"]
+	untisSession = webuntis.Session(
+		server=user["untis_server"],
+		school=user["untis_school"],
+		username=user["untis_username"],
+		password=user["untis_password"],
+		useragent="Untis-Divera247"
+	)
+
+	timeRange = getTimeRange(user["untis_timetable_class"], untisSession)
+	if isInTimeRange(timeRange, datetime.datetime.now().strftime("%H%M")):
+		setStatus(user["divera247_status_present"], ACCESS_KEY)
+	else:
+		setStatus(user["divera247_status_absent"], ACCESS_KEY)
+
 if __name__ == "__main__":
 	users = []
 	try:
@@ -68,20 +85,8 @@ if __name__ == "__main__":
 			users = json.load(file)
 
 		for user in users:
-			ACCESS_KEY = user["divera247_accesskey"]
-			untisSession = webuntis.Session(
-				server=user["untis_server"],
-				school=user["untis_school"],
-				username=user["untis_username"],
-				password=user["untis_password"],
-				useragent="Untis-Divera247"
-			)
+			threading.Thread(target=main, args=(user,)).start()
 
-			timeRange = getTimeRange(user["untis_timetable_class"], untisSession)
-			if isInTimeRange(timeRange, datetime.datetime.now().strftime("%H%M")):
-				setStatus(user["divera247_status_present"], ACCESS_KEY)
-			else:
-				setStatus(user["divera247_status_absent"], ACCESS_KEY)
 	except FileNotFoundError:
 		log("users.json not found!")
 	except KeyError as e:
