@@ -22,3 +22,6 @@ This is a sample `users.json` config file, which you have to provide.
 
 ## Logs (`error.log`)
 Logs are stored in `error.log`.
+
+## TODO
+- [ ] asynchronous code for use with multiple users
