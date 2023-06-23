@@ -1,5 +1,8 @@
 # Untis-Divera247
 
+## What is Untis-Divera247 for?
+With Untis-Divera247 your [Divera 24/7](https://www.divera247.com/) status can be set, according to your timetable, which should be available via [Untis](https://www.untis.at/).
+
 ## Configuration (`users.json`)
 This is a sample `users.json` config file, which you have to provide.
 ```
@@ -16,3 +19,6 @@ This is a sample `users.json` config file, which you have to provide.
 	}
 ]
 ```
+
+## Logs (`error.log`)
+Logs are stored in `error.log`.
