@@ -24,7 +24,10 @@ def getTimeRange(klasse, untisSession):
 
 		timetable = sorted(timetable, key=lambda d: d["startTime"])
 
-		return [[timetable[0]["startTime"], timetable[-1]["endTime"]]]
+		if timetable != []:
+			return [[timetable[0]["startTime"], timetable[-1]["endTime"]]]
+		else:
+			return []
 	except IndexError:
 		log(f"Untis: Klasse '{klasse}' not found.")
 		sys.exit(1)
