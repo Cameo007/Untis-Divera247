@@ -94,7 +94,6 @@ def main(user):
 
 	if not "error" in untisSession:
 		timeRange = getTimeRange(UNTIS_URL, untisSession["result"])
-		print(isInTimeRange(timeRange, datetime.datetime.now(pytz.timezone(user["timezone"])).strftime("%H%M")))
 		if isInTimeRange(timeRange, datetime.datetime.now(pytz.timezone(user["timezone"])).strftime("%H%M")):
 			setStatus(user["divera247_status_present"], ACCESS_KEY)
 		else:
