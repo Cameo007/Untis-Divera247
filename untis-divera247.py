@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import webuntis, datetime, json, requests, sys, threading
+import webuntis, datetime, pytz, json, requests, sys, threading
 
 def log(message):
 	with open("error.log", "a") as file:
@@ -76,7 +76,7 @@ def main(user):
 	)
 
 	timeRange = getTimeRange(user["untis_timetable_class"], untisSession)
-	if isInTimeRange(timeRange, datetime.datetime.now().strftime("%H%M")):
+	if isInTimeRange(timeRange, datetime.datetime.now(pytz.timezone(user["timezone"])).strftime("%H%M")):
 		setStatus(user["divera247_status_present"], ACCESS_KEY)
 	else:
 		setStatus(user["divera247_status_absent"], ACCESS_KEY)
