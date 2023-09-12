@@ -16,7 +16,7 @@ This is a sample `users.json` config file, which you have to provide.
 		"divera247_accesskey":"", # Divera 24/7 access key; available at Settings -> Debug
 		"divera247_status_present":"", # Divera 24/7 status ID for presence
 		"divera247_status_absent":"", # Divera 24// status ID for absence
-		"timezone":"" # Timezone used for checking against timetable, not for logs
+		"timezone":"" # Time zone which is used for checking against the timetable, not for logs
 	}
 ]
 ```
