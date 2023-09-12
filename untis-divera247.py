@@ -5,7 +5,7 @@ def log(message):
 	with open("error.log", "a") as file:
 		file.write(datetime.datetime.now().strftime("%d/%m/%Y %H:%M") + " " + message + "\n")
 
-def getTimeRange(UNTIS_URL, klasse, untisSession):
+def getTimeRange(UNTIS_URL, untisSession):
 	try:
 		rawTimetable = requests.get(UNTIS_URL, cookies={"JSESSIONID": untisSession["sessionId"]}, json = {
 			"id": "getting-timetable",
@@ -93,7 +93,7 @@ def main(user):
 	}).json()
 
 	if not "error" in untisSession:
-		timeRange = getTimeRange(UNTIS_URL, user["untis_timetable_class"], untisSession["result"])
+		timeRange = getTimeRange(UNTIS_URL, untisSession["result"])
 		print(isInTimeRange(timeRange, datetime.datetime.now(pytz.timezone(user["timezone"])).strftime("%H%M")))
 		if isInTimeRange(timeRange, datetime.datetime.now(pytz.timezone(user["timezone"])).strftime("%H%M")):
 			setStatus(user["divera247_status_present"], ACCESS_KEY)
