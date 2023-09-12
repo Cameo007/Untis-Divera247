@@ -1,3 +1,2 @@
 pytz==2022.1
 Requests==2.31.0
-webuntis==0.1.22

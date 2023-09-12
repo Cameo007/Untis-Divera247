@@ -12,7 +12,6 @@ This is a sample `users.json` config file, which you have to provide.
 		"untis_school":"", # Untis school name
 		"untis_username":"",
 		"untis_password":"",
-		"untis_timetable_class":"", # Class used for timetable
 		"divera247_accesskey":"", # Divera 24/7 access key; available at Settings -> Debug
 		"divera247_status_present":"", # Divera 24/7 status ID for presence
 		"divera247_status_absent":"", # Divera 24// status ID for absence
