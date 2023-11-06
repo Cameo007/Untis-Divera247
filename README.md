@@ -1,5 +1,7 @@
 # Untis-Divera247
 
+# Moved to [Codeberg](https://codeberg.org/Cameo007/Untis-Divera247.git)
+
 ## What is Untis-Divera247 for?
 With Untis-Divera247 your [Divera 24/7](https://www.divera247.com/) status can be set, according to your timetable, which should be available via [Untis](https://www.untis.at/).
 
